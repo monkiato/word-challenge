@@ -1,0 +1,27 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+- name: build
+  image: golang:1.13
+  commands:
+  - go build
+
+- name: test
+  image: golang:1.13
+  commands:
+  - go test ./... -race -coverprofile=coverage.txt -covermode=atomic
+
+- name: coverage
+  image: plugins/codecov
+  settings:
+    token: 730408be-c7a6-4014-849f-79f03f5a4905
+    files:
+      - coverage.txt
+
+trigger:
+  ref:
+    - refs/heads/master
+    - refs/pull/*/head
